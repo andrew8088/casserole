@@ -11,7 +11,7 @@ class PostText < Test::Unit::TestCase
   end
 
   def test_date_property_is_date_object
-    assert @@post.date.is_a?(Date), "date property is a date"
+    assert_equal @@post.date.class, Date, "date property is a date"
   end
 
   def test_tags
@@ -30,7 +30,13 @@ class PostText < Test::Unit::TestCase
     assert @@post.title.is_a?(String), "title property is a string"
   end
   def test_post_title_has_no_leading_pound
-    assert_false @@post.title.match(/^#/), "title property does not start with a hash"
+    assert_no_match /^#/, @@post.title, "title property does not start with a hash"
+  end
+  def test_post_content
+    assert defined? @@post.content, "content property definfed"
+  end
+  def test_post_content_is_a_string
+    assert_equal @@post.content.class, String, "content property is a string"
   end
 
 end

@@ -2,7 +2,7 @@ require 'maruku'
 require 'date'
 
 class Post
-  attr_accessor :date, :tags, :title
+  attr_accessor :date, :tags, :title, :content
   # file_path = path to file
   # should end with filename like this:
   # yyyy-mm-dd-my_descript_with_underscores-tag-multiword_tag-tag
@@ -18,7 +18,9 @@ class Post
       begin
         @title = file.readline
       end until @title.match(/^#+(.*)/)
+
       @title = @title.split('#').last
+      @content = Maruku.new(file.read).to_html
     end
   end
 end
