@@ -29,4 +29,8 @@ class PostText < Test::Unit::TestCase
   def test_post_title_is_a_string
     assert @@post.title.is_a?(String), "title property is a string"
   end
+  def test_post_title_has_no_leading_pound
+    assert_false @@post.title.match(/^#/), "title property does not start with a hash"
+  end
+
 end

@@ -14,11 +14,11 @@ class Post
       @date = Date.parse @date
       @tags = @tags.split "-"
     end
-
     File.open(file_path) do |file|
       begin
         @title = file.readline
       end until @title.match(/^#+(.*)/)
+      @title = @title.split('#').last
     end
   end
 end
