@@ -10,7 +10,7 @@ namespace :test do
     filename = "#{Date.today.strftime("%Y-%m-%d")}-#{descripts[r.rand(4)]}-#{tags[r.rand(4)]}-#{tags[r.rand(4)]}.txt"
 
     File.open File.join(Dir.pwd, "test", "test_site", "posts", filename), "w" do |file| 
-      file.write "##the title\nthe body of the post"
+      file.write "##the title #{Time.now}\nthe body of the post"
     end
   end
 
@@ -23,7 +23,7 @@ namespace :test do
     filename = "#{Date.today.strftime("%Y-%m-%d")}-#{descripts[r.rand(4)]}-#{tags[r.rand(4)]}-#{tags[r.rand(4)]}.txt"
 
     File.open File.join(Dir.pwd, "test", "test_site", "posts", filename), "w" do |file| 
-      file.write "##[the link](http://net.tutsplus.com)\nthe body of the post" 
+      file.write "##[the link #{Time.now}](http://net.tutsplus.com)\nthe body of the post" 
     end
   end
 
