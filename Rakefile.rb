@@ -9,7 +9,7 @@ namespace :test do
 
     filename = "#{Date.today.strftime("%Y-%m-%d")}-#{descripts[r.rand(4)]}-#{tags[r.rand(4)]}-#{tags[r.rand(4)]}.txt"
 
-    File.open File.join(Dir.pwd, "tests", "test_site", "posts", filename), "w" do |file| 
+    File.open File.join(Dir.pwd, "test", "test_site", "posts", filename), "w" do |file| 
       file.write "##the title\nthe body of the post"
     end
   end
@@ -22,8 +22,15 @@ namespace :test do
 
     filename = "#{Date.today.strftime("%Y-%m-%d")}-#{descripts[r.rand(4)]}-#{tags[r.rand(4)]}-#{tags[r.rand(4)]}.txt"
 
-    File.open File.join(Dir.pwd, "tests", "test_site", "posts", filename), "w" do |file| 
+    File.open File.join(Dir.pwd, "test", "test_site", "posts", filename), "w" do |file| 
       file.write "##[the link](http://net.tutsplus.com)\nthe body of the post" 
+    end
+  end
+
+  desc "Run the unit tests in test"
+  task :unit_tests do |t|
+    Dir.glob("test/*_test.rb") do |file|
+      `ruby #{file}`
     end
   end
 end

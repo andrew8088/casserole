@@ -3,7 +3,8 @@ require_relative '../post'
 
 class PostText < Test::Unit::TestCase
 
-  @@filename = File.join Dir.pwd, "tests", "test_site", "posts", "2011-05-03-sample_post-tag-another_tag-final_tag.txt"
+  `rake test:create_new_post`
+  @@filename = Dir.glob( File.join Dir.pwd, "test", "test_site", "posts", "*").entries.first
   @@post     = Post.new @@filename
 
   def test_date_property_is_date_object
