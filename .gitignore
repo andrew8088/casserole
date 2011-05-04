@@ -1,2 +1,2 @@
 .DS_Store
-tests/test_site/*
+test/test_site/*
