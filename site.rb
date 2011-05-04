@@ -19,16 +19,26 @@ class Site
   end
 
   def process_new_posts
-    slugs = []
+    posts = []
     Dir.glob(File.join @posts_path, "*" ).each do |file|
-      slugs << add_post(file)
+      posts << render_post(file)
+      file = File.basename(file)
+      FileUtils.mv(File.join(@posts_path, file), File.join(@archived_path, file))
     end
-    slugs
+
+    posts.map { |post| post.tags }.flatten.uniq.each do |tag|
+      render_tag_page tag
+    end
+
+  end
+
+  def regenerate!
+
   end
 
   private
 
-  def add_post post_path
+  def render_post post_path
     post = Post.new post_path
     File.open File.join(@output_path, post.permalink), "w" do |file|
       file.write @shell.render(Object.new, post:post, site: self) {
@@ -36,27 +46,25 @@ class Site
                            .render(Object.new, post:post, site:self)
       }
     end
-
-    post_path = File.basename(post_path)
-    FileUtils.mv(File.join(@posts_path, post_path), File.join(@archived_path, post_path))
-
-    if post.tags and post.tags.is_a? Array
-      post.tags.each do |tag|
-        render_tag_page tag
-      end
-    end
-
-    post.slug
+    post
   end
 
   def render_tag_page tag
-    posts = Dir.glob( File.join @archived_path, "*#{tag}*").map { |post| Post.new post }
+    posts = Dir.glob( File.join @archived_path, "*#{tag}*").map { |post| Post.new post }.sort
 
     File.open File.join(@output_path, "#{tag.gsub '_', '-'}.html"), "w" do |file|
       file.write @shell.render(Object.new, site: self) {
         Tilt::ERBTemplate.new(@archive_layout).render Object.new, posts: posts
       }
     end
+  end
+
+  def render_archive_page month, year
+
+  end
+
+  def render_index
+  
   end
 
   def render layout, props

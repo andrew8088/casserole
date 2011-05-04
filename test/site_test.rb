@@ -19,8 +19,21 @@ class SiteTest < Test::Unit::TestCase
 
   def test_site_should_render_posts
     raw_posts = Dir.glob(File.join @@site_path, "posts", "*.txt").entries.size
-    slugs = @@site.process_new_posts.size
-    assert_equal raw_posts, slugs, "Same number of posts added as available"
+    posts = @@site.process_new_posts.size
+    assert_equal raw_posts, posts, "Same number of posts added as available"
   end
 
+  def test_site_should_render_tag_pages
+    Dir.glob(File.join @@site_path, "posts", "*").each do |f|
+      File.delete f
+    end
+    Dir.glob(File.join @@site_path, "site", "{tag-one,tag-two}.html").each do |f|
+      File.delete f
+    end
+    File.open File.join(@@site_path, "posts", "2012-01-31-some_slug-tag_one-tag_two.txt"), "w" do |f|
+      f.write "##the title #{Time.now}\n\nthe content goes here"
+    end
+    @@site.process_new_posts
+    assert_equal Dir.glob(File.join @@site_path, "site", "{tag-one,tag-two}.html").size, 2, "site generates tag pages"
+  end
 end
