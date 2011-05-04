@@ -3,6 +3,7 @@ require 'date'
 
 class Post
   attr_accessor :date, :tags, :title, :content, :slug, :link, :permalink, :type
+  include Comparable
   # file_path = path to file
   # should end with filename like this:
   # yyyy-mm-dd-my_descript_with_underscores-tag-multiword_tag-tag
@@ -34,5 +35,11 @@ class Post
       @slug      = @title.downcase.gsub(/[^\w\s]/, "").gsub /\s+/, "-"
       @permalink = "#{@slug}.html"
     end
+  end
+
+  def <=> b
+    return  1 if @date <  b.date
+    return -1 if @date >  b.date
+    return  0 if @date == b.date
   end
 end
