@@ -19,7 +19,7 @@ class PostText < Test::Unit::TestCase
   end
 
   def test_tags_property_is_array_object
-    assert @@post.tags.is_a?(Array), "tags property is an array"
+    assert @@post.tags.is_a?(Array), "tags property is an array: #{@@post.tags}"
   end
 
   def test_post_title
