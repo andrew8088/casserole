@@ -3,7 +3,7 @@ require_relative '../post'
 
 class PostText < Test::Unit::TestCase
 
-  @@filename = File.join Dir.pwd, "tests", "2011-05-03-sample_post-tag-another_tag-final_tag.txt"
+  @@filename = File.join Dir.pwd, "tests", "test_site", "posts", "2011-05-03-sample_post-tag-another_tag-final_tag.txt"
   @@post     = Post.new @@filename
 
   def test_date_property_is_date_object
