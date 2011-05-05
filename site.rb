@@ -30,10 +30,18 @@ class Site
       render_tag_page tag
     end
 
+    render_index posts.sort.first 10
+    posts
   end
 
   def regenerate!
+    FileUtils.rm_rf @output_path
+    Dir.mkdir  @output_path
 
+    Dir.glob( File.join @archived_path, "*" ).each do |file|
+      FileUtils.mv file, File.join(@posts_path, File.basename(file))
+    end
+    process_new_posts
   end
 
   private
@@ -52,10 +60,11 @@ class Site
   def render_tag_page tag
     posts = Dir.glob( File.join @archived_path, "*#{tag}*").map { |post| Post.new post }.sort
 
-    File.open File.join(@output_path, "#{tag.gsub '_', '-'}.html"), "w" do |file|
-      file.write @shell.render(Object.new, site: self) {
-        Tilt::ERBTemplate.new(@archive_layout).render Object.new, posts: posts
-      }
+    tag_dir = File.join @output_path, "tag"
+    Dir.mkdir tag_dir unless Dir.exists? tag_dir
+
+    File.open File.join(@output_path, "tag", "#{tag.gsub '_', '-'}.html"), "w" do |file|
+      file.write render(@archive_layout, posts: posts)
     end
   end
 
@@ -63,13 +72,15 @@ class Site
 
   end
 
-  def render_index
-  
+  def render_index posts
+     File.open(File.join(@output_path, "index.html"), "w") do |file|
+      file.write render(File.join(@layouts_path, "index.erb"), posts: posts)
+    end 
   end
 
   def render layout, props
     @shell.render(Object.new, site: self) {
-      Tilt::ERBTemplate.new(layout).render Object.new props 
+      Tilt::ERBTemplate.new(layout).render Object.new, props 
     }
   end
   

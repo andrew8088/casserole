@@ -18,7 +18,7 @@ class SiteTest < Test::Unit::TestCase
   end
 
   def test_site_should_render_posts
-    raw_posts = Dir.glob(File.join @@site_path, "posts", "*.txt").entries.size
+    raw_posts = Dir.glob(File.join @@site_path, "posts", "*").entries.size
     posts = @@site.process_new_posts.size
     assert_equal raw_posts, posts, "Same number of posts added as available"
   end
@@ -27,13 +27,22 @@ class SiteTest < Test::Unit::TestCase
     Dir.glob(File.join @@site_path, "posts", "*").each do |f|
       File.delete f
     end
-    Dir.glob(File.join @@site_path, "site", "{tag-one,tag-two}.html").each do |f|
-      File.delete f
-    end
-    File.open File.join(@@site_path, "posts", "2012-01-31-some_slug-tag_one-tag_two.txt"), "w" do |f|
+    
+    File.open File.join(@@site_path, "posts", "2012-01-31-some_slug#{Time.now.strftime "%M%S"}-tag_one-tag_two.txt"), "w" do |f|
       f.write "##the title #{Time.now}\n\nthe content goes here"
     end
+
+
     @@site.process_new_posts
-    assert_equal Dir.glob(File.join @@site_path, "site", "{tag-one,tag-two}.html").size, 2, "site generates tag pages"
+    assert_equal Dir.glob(File.join @@site_path, "site", "tag", "{tag-one,tag-two}.html").size, 2, "site generates tag pages"
+  end
+
+
+  def test_site_should_regenerate
+    posts_size = Dir.glob( File.join @@site_path, "old_posts", "*" ).size + Dir.glob( File.join @@site_path, "posts", "*").size
+    @@site.regenerate!
+    processed_posts = Dir.glob( File.join @@site_path, "site", "*.html" ).map { |p| p.split("/").last }
+    processed_posts.delete "index.html"
+    assert_equal posts_size, processed_posts.size, "site regenerates correctly"
   end
 end
