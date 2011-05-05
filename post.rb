@@ -8,11 +8,11 @@ class Post
   # should end with filename like this:
   # yyyy-mm-dd-my_descript_with_underscores-tag-multiword_tag-tag
   def initialize file_path
-    md = file_path.match(/(\d{4}-\d{2}-\d{2})-(\w*)-([\w-]*)/)
+    md = file_path.match(/(\d{4}-\d{2}-\d{2}-?(\d{2}-\d{2})?)-(\w*)-([\w-]*)/)
 
     unless md.nil?
       @date = Date.parse(md[1])
-      @tags = md[3].split "-"
+      @tags = md[4].split "-"
     end
 
     File.open(file_path) do |file|

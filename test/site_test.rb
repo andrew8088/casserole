@@ -28,7 +28,7 @@ class SiteTest < Test::Unit::TestCase
       File.delete f
     end
     
-    File.open File.join(@@site_path, "posts", "2012-01-31-some_slug#{Time.now.strftime "%M%S"}-tag_one-tag_two.txt"), "w" do |f|
+    File.open File.join(@@site_path, "posts", "2012-01-31-12-13-some_slug#{Time.now.strftime "%M%S"}-tag_one-tag_two.txt"), "w" do |f|
       f.write "##the title #{Time.now}\n\nthe content goes here"
     end
 
