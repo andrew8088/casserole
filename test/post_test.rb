@@ -1,5 +1,5 @@
 require 'test/unit'
-require_relative '../post'
+require_relative '../bin/post'
 
 class PostText < Test::Unit::TestCase
 

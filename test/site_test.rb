@@ -1,5 +1,5 @@
 require 'test/unit'
-require_relative '../site'
+require_relative '../bin/site'
 
 class SiteTest < Test::Unit::TestCase
 
