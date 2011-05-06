@@ -30,7 +30,12 @@ class Site
       render_tag_page tag
     end
 
-    render_index posts.sort.first 10
+    render_index 
+
+    posts.map { |post| post.date.strftime("%Y %m") }.flatten.uniq.each do |year_month|
+      render_archive_page *year_month.split
+    end
+    
     posts
   end
 
@@ -68,12 +73,24 @@ class Site
     end
   end
 
-  def render_archive_page month, year
+  def render_archive_page year, month
+    posts = Dir.glob( File.join @archived_path, "#{year}-#{month}*").map { |post| Post.new post }.sort
+    
+    year_dir  = File.join @output_path, year.to_s
+    month_dir = File.join @output_path, year.to_s, month.to_s
 
+    Dir.mkdir year_dir unless Dir.exists? year_dir
+    Dir.mkdir month_dir unless Dir.exists? month_dir
+
+    File.open( File.join(month_dir, "index.html"), "w") do |file|
+      file.write render(@archive_layout, posts: posts)
+    end
   end
 
-  def render_index posts
-     File.open(File.join(@output_path, "index.html"), "w") do |file|
+  def render_index
+    posts = Dir.glob( File.join @archived_path, "*" ).map { |post| Post.new post }.sort.first 10
+
+    File.open(File.join(@output_path, "index.html"), "w") do |file|
       file.write render(File.join(@layouts_path, "index.erb"), posts: posts)
     end 
   end

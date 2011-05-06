@@ -37,12 +37,30 @@ class SiteTest < Test::Unit::TestCase
     assert_equal Dir.glob(File.join @@site_path, "site", "tag", "{tag-one,tag-two}.html").size, 2, "site generates tag pages"
   end
 
-
   def test_site_should_regenerate
     posts_size = Dir.glob( File.join @@site_path, "old_posts", "*" ).size + Dir.glob( File.join @@site_path, "posts", "*").size
     @@site.regenerate!
     processed_posts = Dir.glob( File.join @@site_path, "site", "*.html" ).map { |p| p.split("/").last }
     processed_posts.delete "index.html"
     assert_equal posts_size, processed_posts.size, "site regenerates correctly"
+  end
+
+  def test_site_should_generate_monthly_archive_pages
+    Dir.glob(File.join @@site_path, "posts", "*").each do |f|
+      File.delete f
+    end
+
+    expected_archives = Dir.glob(File.join @@site_path, "old_posts", "*").map do |file|
+      Date.parse(file.match(/(\d{4}-\d{2}-\d{2}-?(\d{2}-\d{2})?)-(\w*)-([\w-]*)/)[1]).strftime("%Y%m")
+    end.flatten.uniq.sort!
+
+    @@site.regenerate!
+    
+    actual_archives = Dir.glob(File.join @@site_path, "site", "[0-9][0-9][0-9][0-9]", "[0-9][0-9]").map do |month|
+      md = month.match(/(\d{4})\/(\d{2})/)
+      "#{md[1]}#{md[2]}"
+    end.flatten.uniq.sort!
+
+    assert_equal expected_archives, actual_archives, "site generates archives property"
   end
 end
