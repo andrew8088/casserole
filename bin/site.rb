@@ -54,10 +54,7 @@ class Site
   def render_post post_path
     post = Post.new post_path
     File.open File.join(@output_path, post.permalink), "w" do |file|
-      file.write @shell.render(Object.new, post:post, site: self) {
-          Tilt::ERBTemplate.new(File.join @layouts_path, (post.type == :link) ? "link.erb" : "post.erb")
-                           .render(Object.new, post:post, site:self)
-      }
+      file.write post.render
     end
     post
   end

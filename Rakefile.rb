@@ -29,7 +29,7 @@ namespace :test do
 
   desc "Run the unit tests in test"
   task :unit_tests do |t|
-    Dir.glob("test/*_test.rb") do |file|
+    Dir.glob( File.join Dir.pwd, "test", "*_test.rb") do |file|
       `ruby #{file}`
     end
   end

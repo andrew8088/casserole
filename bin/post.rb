@@ -1,12 +1,16 @@
+require 'tilt'
 require 'maruku'
 require 'date'
 
 class Post
   attr_accessor :date, :tags, :title, :content, :slug, :link, :permalink, :type
+
   include Comparable
+
+
   # file_path = path to file
   # should end with filename like this:
-  # yyyy-mm-dd-my_descript_with_underscores-tag-multiword_tag-tag
+  # yyyy-mm-dd-hh-mm-my_descript_with_underscores-tag-multiword_tag-tag
   def initialize file_path
     md = file_path.match(/(\d{4}-\d{2}-\d{2}-?(\d{2}-\d{2})?)-(\w*)-([\w-]*)/)
 
@@ -17,10 +21,8 @@ class Post
 
     File.open(file_path) do |file|
 
-      begin
-        @title = file.readline
-      end until md = @title.match(/^#+(.*)/)
-
+      @title = ""
+      @title = file.readline until md = @title.match(/^#+(.*)/) 
       @title = md[1]
 
       if (md = @title.match /^\[(.*)\]\((.*)\)/)
@@ -35,6 +37,21 @@ class Post
       @slug      = @title.downcase.gsub(/[^\w\s]/, "").gsub /\s+/, "-"
       @permalink = "#{@slug}.html"
     end
+  end
+
+  def render
+    @@post_template ||= Tilt.new( File.join "layouts", "post.erb" ) 
+    @@link_template ||= Tilt.new( File.join "layouts", "link.erb" ) 
+
+    (self.type == :post ? @@post_template : @@link_template).render(Object.new, post: self) 
+  end
+
+  def self.post_template= template
+    @@post_template = Tilt.new(template)
+  end
+
+  def self.link_template= template
+    @@link_template = Tilt.new(template)
   end
 
   def <=> b

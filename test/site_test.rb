@@ -3,8 +3,12 @@ require_relative '../bin/site'
 
 class SiteTest < Test::Unit::TestCase
 
+
   @@site_path = File.join Dir.pwd, "test", "test_site" 
   @@site = Site.new "Shaky Takes", @@site_path
+
+  Post.post_template = File.join @@site_path, "layouts", "post.erb"
+  Post.link_template = File.join @@site_path, "layouts", "link.erb"
 
   def test_site_created
     assert_equal @@site.class, Site, "site object is a Site"
