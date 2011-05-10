@@ -7,7 +7,6 @@ class Post
 
   include Comparable
 
-
   # file_path = path to file
   # should end with filename like this:
   # yyyy-mm-dd-hh-mm-my_descript_with_underscores-tag-multiword_tag-tag
@@ -40,9 +39,6 @@ class Post
   end
 
   def render
-    @@post_template ||= Tilt.new( File.join "layouts", "post.erb" ) 
-    @@link_template ||= Tilt.new( File.join "layouts", "link.erb" ) 
-
     (self.type == :post ? @@post_template : @@link_template).render(Object.new, post: self) 
   end
 
