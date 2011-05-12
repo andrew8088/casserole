@@ -3,7 +3,7 @@ require_relative '../bin/post'
 describe 'Posts' do 
 
   before :all do
-    `rake test:setup`
+    `rake test:reset`
     @post_template = File.join Dir.pwd, "test", "layouts", "post.erb"
     @link_template = File.join Dir.pwd, "test", "layouts", "link.erb"
 

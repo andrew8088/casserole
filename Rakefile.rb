@@ -38,6 +38,23 @@ namespace :test do
       create_note
     end
   end
+  
+  task :reset do
+    test_site = File.join Dir.pwd, "test"
+    test_site_posts = File.join test_site, "posts"
+    test_site_output  = File.join test_site, "site"
+
+    FileUtils.rm_rf test_site_posts
+    Dir.mkdir test_site_posts 
+    FileUtils.rm_rf test_site_output
+    Dir.mkdir test_site_output
+
+    5.times do
+      create_note
+    end
+  end
+
+
 end
 
 
