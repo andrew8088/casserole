@@ -3,7 +3,7 @@ require 'fileutils'
 require_relative 'post'
 
 class Site
-  attr_accessor :title
+  attr_accessor :title, :posts_path
 
   def initialize title, site_base = Dir.pwd, paths = { posts: "posts", layouts: "layouts", output: "site" }
     @output_path    = File.join site_base, paths[:output]
@@ -49,12 +49,13 @@ class Site
     process_new_posts
   end
 
-  private
+  private 
 
   def render_post post_path
     post = Post.new post_path
+    template_path = post.type == :post ? "post.erb" : "link.erb"
     File.open File.join(@output_path, post.permalink), "w" do |file|
-      file.write post.render
+      file.write post.render(File.join @layouts_path, template_path)
     end
     post
   end

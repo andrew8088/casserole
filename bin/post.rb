@@ -38,16 +38,8 @@ class Post
     end
   end
 
-  def render
-    (self.type == :post ? @@post_template : @@link_template).render(Object.new, post: self) 
-  end
-
-  def self.post_template= template
-    @@post_template = Tilt.new(template)
-  end
-
-  def self.link_template= template
-    @@link_template = Tilt.new(template)
+  def render template_path
+    Tilt.new(template_path).render(Object.new, post: self) 
   end
 
   def <=> b

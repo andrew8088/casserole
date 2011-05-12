@@ -2,13 +2,18 @@ require_relative '../bin/post'
 
 describe 'Posts' do 
 
-  before :each do
-    Post.post_template = File.join Dir.pwd, "test", "layouts", "post.erb"
-    Post.link_template = File.join Dir.pwd, "test", "layouts", "link.erb"
+  before :all do
+    `rake test:setup`
+    @post_template = File.join Dir.pwd, "test", "layouts", "post.erb"
+    @link_template = File.join Dir.pwd, "test", "layouts", "link.erb"
 
     textfiles = Dir.glob File.join(Dir.pwd, "test","posts", "*.txt")
     r = Random.new
     @post = Post.new textfiles[r.rand(textfiles.length)]
+  end
+
+  it "should be a post object" do
+    @post.should be_an_instance_of Post
   end
 
   describe 'title' do
@@ -61,9 +66,8 @@ describe 'Posts' do
   end
 
   # Post Spec
-
   it 'should render itself' do
-    @post.render.should be_an_instance_of String
+    template = @post.type == :post ? @post_template : @link_template
+    @post.render(template).should be_an_instance_of String
   end
-
 end
