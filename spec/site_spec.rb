@@ -5,7 +5,7 @@ describe 'Site' do
   before :all do
     `rake test:reset`
     @site_path = File.join Dir.pwd, "test"
-    @site = Site.new "Shaky Takes", @site_path
+    @site = Site.new "Shaky Takes", "http://shakytakes.com", "atom.xml", { name: "Andrew Burgess", email: "andrew@shakytakes.com" }, @site_path
   end
 
   before :each do
@@ -19,7 +19,6 @@ describe 'Site' do
   it "should move posts after processing" do
     @site.process_new_posts
     Dir.glob(File.join(@site.posts_path, "*")).should be_empty
-
   end
 
   it "should generate tag pages" do
@@ -65,5 +64,10 @@ describe 'Site' do
       "#{md[1]}#{md[2]}"
     end
     (dates - archives).should be_empty
+  end
+
+  it "should generate an atom feed" do 
+    f = File.new File.join(@site_path, "site", "atom.xml")
+    f.should be_an_instance_of File
   end
 end

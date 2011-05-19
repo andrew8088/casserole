@@ -3,19 +3,23 @@ require 'fileutils'
 require_relative 'post'
 
 class Site
-  attr_accessor :title, :posts_path
+  attr_accessor :title, :posts_path, :url, :feed_url, :author
 
-  def initialize title, site_base = Dir.pwd, paths = { posts: "posts", layouts: "layouts", output: "site" }
+  def initialize title, url, feed_url, author, site_base = Dir.pwd, paths = { posts: "posts", layouts: "layouts", output: "site" }
     @output_path    = File.join site_base, paths[:output]
     @layouts_path   = File.join site_base, paths[:layouts]
     @posts_path     = File.join site_base, paths[:posts]
-    @title          = title
     @archive_layout = File.join @layouts_path, "archive.erb"
     @shell          = Tilt::ERBTemplate.new File.join @layouts_path, "layout.erb"
     @archived_path  = File.join site_base, "old_posts"
 
     Dir.mkdir @output_path   unless Dir.exists? @output_path
     Dir.mkdir @archived_path unless Dir.exists? @archived_path
+
+    @title    = title
+    @url      = url
+    @feed_url = "#{url}/#{feed_url}"
+    @author   = author
   end
 
   def process_new_posts
@@ -30,11 +34,12 @@ class Site
       render_tag_page tag
     end
 
-    render_index 
-
     posts.map { |post| post.date.strftime("%Y %m") }.flatten.uniq.each do |year_month|
       render_archive_page *year_month.split
     end
+
+    render_index 
+    render_feed Dir.glob(File.join(@archived_path, "*")).map { |p| Post.new p }
     
     posts
   end
@@ -50,6 +55,14 @@ class Site
   end
 
   private 
+
+  def render_feed posts
+    t = Tilt::ERBTemplate.new File.join @layouts_path, "atom.erb"
+
+    File.open File.join(@output_path, "atom.xml"), "w" do |file|
+      file.write t.render(Object.new, site: self, posts: posts)
+    end
+  end
 
   def render_post post_path
     post = Post.new post_path
@@ -98,5 +111,4 @@ class Site
       Tilt::ERBTemplate.new(layout).render Object.new, props 
     }
   end
-  
 end
