@@ -68,7 +68,9 @@ class Site
     post = Post.new post_path
     template_path = post.type == :post ? "post.erb" : "link.erb"
     File.open File.join(@output_path, post.permalink), "w" do |file|
-      file.write post.render(File.join @layouts_path, template_path)
+      file.write @shell.render(Object.new, site: self) {
+        post.render(File.join @layouts_path, template_path)
+      }
     end
     post
   end
